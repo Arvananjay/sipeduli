@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Carbon;
 
+
+
 class UserController extends Controller
 {
     public function index()
@@ -29,6 +31,62 @@ class UserController extends Controller
             'pengaduan' => $pengaduan,
             'proses' => $proses,
             'selesai' => $selesai,
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TRANSPARANSI DATA HOME
+    |--------------------------------------------------------------------------
+    */
+
+    public function semuaPengaduan(Request $request)
+    {
+        $query = Pengaduan::query();
+
+        if ($request->search) {
+            $query->where('judul_laporan', 'like', '%' . $request->search . '%')
+                  ->orWhere('isi_laporan', 'like', '%' . $request->search . '%')
+                  ->orWhere('lokasi_kejadian', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->orderBy('tgl_pengaduan', 'desc')->paginate(10);
+
+        return view('pages.user.semua-pengaduan', [
+            'judul' => 'Semua Pengaduan',
+            'data' => $data
+        ]);
+    }
+
+    public function pengaduanProses(Request $request)
+    {
+        $query = Pengaduan::where('status', 'proses');
+
+        if ($request->search) {
+            $query->where('judul_laporan', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->orderBy('tgl_pengaduan', 'desc')->paginate(10);
+
+        return view('pages.user.pengaduan-proses', [
+            'judul' => 'Sedang Diproses',
+            'data' => $data
+        ]);
+    }
+
+    public function pengaduanSelesai(Request $request)
+    {
+        $query = Pengaduan::where('status', 'selesai');
+
+        if ($request->search) {
+            $query->where('judul_laporan', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->orderBy('tgl_pengaduan', 'desc')->paginate(10);
+
+        return view('pages.user.pengaduan-selesai', [
+            'judul' => 'Pengaduan Selesai',
+            'data' => $data
         ]);
     }
 

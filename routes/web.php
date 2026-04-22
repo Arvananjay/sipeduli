@@ -1,86 +1,154 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\IndoRegionController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PetugasController;
+use App\Http\Controllers\Admin\MasyarakatController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\PengaduanController;
+use App\Http\Controllers\Admin\TanggapanController;
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
-Route::get('/', [\App\Http\Controllers\User\UserController::class, 'index']);
+/*
+|--------------------------------------------------------------------------
+| HALAMAN UTAMA
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/pengaduan',  [\App\Http\Controllers\User\UserController::class, 'pengaduan'])->name('pengaduan');
-Route::post('/pengaduan/kirim',  [\App\Http\Controllers\User\UserController::class, 'storePengaduan'])->name('pengaduan.store');
+Route::get('/', [UserController::class, 'index']);
 
-Route::get('/login',  [\App\Http\Controllers\User\UserController::class, 'masuk']);
-Route::get('/register',  [\App\Http\Controllers\User\UserController::class, 'daftar']);
-Route::get('/tentang',  [\App\Http\Controllers\User\UserController::class, 'tentang']);
+/*
+|--------------------------------------------------------------------------
+| MENU HOME (Tutorial / Alur Sistem)
+|--------------------------------------------------------------------------
+*/
+
+Route::view('/tutorial-pengaduan', 'tutorial-pengaduan');
+Route::view('/verifikasi', 'verifikasi');
+Route::view('/tindaklanjut', 'tindaklanjut');
+Route::view('/selesai', 'selesai');
+
+/*
+|--------------------------------------------------------------------------
+| TRANSPARANSI DATA PENGADUAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/data-pengaduan/semua', [UserController::class, 'semuaPengaduan']);
+Route::get('/data-pengaduan/proses', [UserController::class, 'pengaduanProses']);
+Route::get('/data-pengaduan/selesai', [UserController::class, 'pengaduanSelesai']);
+
+/*
+|--------------------------------------------------------------------------
+| USER PUBLIC
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pengaduan', [UserController::class, 'pengaduan'])->name('pengaduan');
+Route::post('/pengaduan/kirim', [UserController::class, 'storePengaduan'])->name('pengaduan.store');
+
+Route::get('/login', [UserController::class, 'masuk']);
+Route::get('/register', [UserController::class, 'daftar']);
+Route::get('/tentang', [UserController::class, 'tentang']);
+
+/*
+|--------------------------------------------------------------------------
+| GUEST USER
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['guest'])->group(function () {
-    // Login Masyarakat
-    Route::get('/login',  [\App\Http\Controllers\User\UserController::class, 'masuk'])->name('user.masuk');
-    Route::post('/login/auth', [\App\Http\Controllers\User\UserController::class, 'login'])->name('user.login');
 
-    // Register
-    Route::get('/register', [\App\Http\Controllers\User\UserController::class, 'register'])->name('user.register');
-    Route::post('/getdesa', [\App\Http\Controllers\IndoRegionController::class, 'getDesa'])->name('getdesa');
-    Route::post('/getkota', [\App\Http\Controllers\IndoRegionController::class, 'getkota'])->name('getkota');
-    Route::post('/getkecamatan', [\App\Http\Controllers\IndoRegionController::class, 'getkecamatan'])->name('getkecamatan');
-    Route::post('/getkabupaten', [\App\Http\Controllers\IndoRegionController::class, 'getkabupaten'])->name('getkabupaten');
-    Route::post('/register/auth', [\App\Http\Controllers\User\UserController::class, 'register_post'])->name('user.register-post');
+    Route::get('/login', [UserController::class, 'masuk'])->name('user.masuk');
+    Route::post('/login/auth', [UserController::class, 'login'])->name('user.login');
+
+    Route::get('/register', [UserController::class, 'register'])->name('user.register');
+    Route::post('/register/auth', [UserController::class, 'register_post'])->name('user.register-post');
+
+    Route::post('/getdesa', [IndoRegionController::class, 'getDesa'])->name('getdesa');
+    Route::post('/getkota', [IndoRegionController::class, 'getkota'])->name('getkota');
+    Route::post('/getkecamatan', [IndoRegionController::class, 'getkecamatan'])->name('getkecamatan');
+    Route::post('/getkabupaten', [IndoRegionController::class, 'getkabupaten'])->name('getkabupaten');
 });
+
+/*
+|--------------------------------------------------------------------------
+| USER LOGIN (MASYARAKAT)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['isMasyarakat'])->group(function () {
-     // Logout Masyarakat
-     Route::get('/logout', [\App\Http\Controllers\User\UserController::class, 'logout'])->name('user.logout');
 
+    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
 
-     Route::get('/laporan/{who?}', [\App\Http\Controllers\User\UserController::class, 'laporan'])->name('pengaduan.laporan');
-     Route::get('/pengaduan-detail/{id_pengaduan}', [\App\Http\Controllers\User\UserController::class, 'detailPengaduan'])->name('pengaduan.detail');
+    Route::get('/laporan/{who?}', [UserController::class, 'laporan'])->name('pengaduan.laporan');
+
+    Route::get('/pengaduan-detail/{id_pengaduan}', [UserController::class, 'detailPengaduan'])->name('pengaduan.detail');
 });
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN AREA
+|--------------------------------------------------------------------------
+*/
 
-Route::prefix('admin')->group( function() {
-    Route::middleware('isAdmin')->group( function() {
-       Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('admin')->group(function () {
 
-       Route::resource('/petugas', \App\Http\Controllers\Admin\PetugasController::class);
-       Route::resource('/masyarakat', \App\Http\Controllers\Admin\MasyarakatController::class);
-
-       Route::get('/laporan', [\App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
-       Route::post('/laporan-get', [\App\Http\Controllers\Admin\LaporanController::class, 'laporan'])->name('laporan.get');
-       Route::post('/laporan/export', [\App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
-    });
-
-    Route::middleware('isPetugas')->group( function() {
-        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/logout', [\App\Http\Controllers\Admin\AdminController::class, 'logout'])->name('admin.logout');
-
-        // Pengaduan
-        Route::get('pengaduan/{status}', [\App\Http\Controllers\Admin\PengaduanController::class, 'index'])->name('pengaduan.index');
-        Route::get('pengaduan/show/{id_pengaduan}', [\App\Http\Controllers\Admin\PengaduanController::class, 'show'])->name('pengaduan.show');
-        Route::delete('pengaduan/delete/{id_pengaduan}', [\App\Http\Controllers\Admin\PengaduanController::class, 'destroy'])->name('pengaduan.delete');
-
-        // Tanggapan
-        Route::post('tanggapan', [\App\Http\Controllers\Admin\TanggapanController::class, 'response'])->name('tanggapan');
-
-     });
-
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN LOGIN
+    |--------------------------------------------------------------------------
+    */
 
     Route::middleware(['isGuest'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\AdminController::class, 'formLogin'])->name('admin.masuk');
-        Route::post('/login', [\App\Http\Controllers\Admin\AdminController::class, 'login'])->name('admin.login');
+        Route::get('/', [AdminController::class, 'formLogin'])->name('admin.masuk');
+        Route::post('/login', [AdminController::class, 'login'])->name('admin.login');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware(['isAdmin'])->group(function () {
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('/petugas', PetugasController::class);
+        Route::resource('/masyarakat', MasyarakatController::class);
+
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::post('/laporan-get', [LaporanController::class, 'laporan'])->name('laporan.get');
+        Route::post('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | PETUGAS
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware(['isPetugas'])->group(function () {
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+
+        Route::get('/pengaduan/{status}', [PengaduanController::class, 'index'])->name('pengaduan.index');
+
+        Route::get('/pengaduan/show/{id_pengaduan}', [PengaduanController::class, 'show'])->name('pengaduan.show');
+
+        Route::delete('/pengaduan/delete/{id_pengaduan}', [PengaduanController::class, 'destroy'])->name('pengaduan.delete');
+
+        Route::post('/tanggapan', [TanggapanController::class, 'response'])->name('tanggapan');
     });
 });
-
-
-
-// Route::get('/admin', function () {
-//     return view('pages.admin.dashboard');
-// });

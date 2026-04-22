@@ -5,12 +5,12 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>@yield('title') | Pengaduan Masyarakat</title>
+  <title>@yield('title') | SIPEDULI</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
+  <link href="{{ asset('assets/img/magadir.png') }}" rel="icon">
   <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
@@ -21,7 +21,7 @@
   <!-- Vendor CSS Files -->
   <link href="{{ asset('assets/vendor/animate.css/animate.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="{{ asset('assets/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
@@ -54,7 +54,7 @@
   <header id="header" class="fixed-top">
     <div class="container d-flex align-items-center">
 
-      <h1 class="logo me-auto"><a href="/">Pengaduan Masyarakat</a></h1>
+      <h1 class="logo me-auto"><a href="/">SIPEDULI</a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -129,11 +129,11 @@
       </div>
       <div class="social-links text-center text-md-right pt-3 pt-md-0">
         <a href="https://youtube.com/@humasbrebes?si=g83Hc3iEEEXRFXk8" class="youtube"><i
-            class="bx bxl-youtube"></i></a>
+            class="bi bi-youtube"></i></a>
         <a href="https://www.instagram.com/dinkominfotik.brebes?igsh=MXFmeHNtdzdtdWM0bQ==" class="instagram"><i
-            class="bx bxl-instagram"></i></a>
+            class="bi bi-instagram"></i></a>
         <a href="https://www.tiktok.com/@dinkominfotikbrebes?lang=id-ID&is_from_webapp=1&sender_device=mobile&sender_web_id=7629057153672709653"
-          class="Tiktok"><i class="bx bxl-fa-tiktok"></i></a>
+          class="tiktok"><i class="bi bi-fa-tiktok"></i></a>
       </div>
     </div>
   </footer><!-- End Footer -->
